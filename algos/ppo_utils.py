@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from torch.distributions import Normal, Independent, Categorical
+from torch.distributions import Categorical, Normal, Independent
 import numpy as np
 import  torch
 
