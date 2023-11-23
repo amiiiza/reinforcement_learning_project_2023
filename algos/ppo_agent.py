@@ -7,11 +7,12 @@ import torch.nn.functional as F
 import time
 
 class PPOAgent(BaseAgent):
-    def __init__(self, config=None):
+    def __init__(self, config = None):
         super(PPOAgent, self).__init__(config)
         self.device = self.cfg.device  # ""cuda" if torch.cuda.is_available() else "cpu"
-        self.policy=
-        self.lr=self.cfg.lr
+        p = Policy(config["observation_space_dim"], config["action_space_dim"], config["env"])
+        self.policy = p.to(self.train_device)
+        self.lr = self.cfg.lr
 
         self.batch_size = self.cfg.batch_size
         self.gamma = self.cfg.gamma
@@ -130,7 +131,7 @@ class PPOAgent(BaseAgent):
 
         while not done and episode_length < self.cfg.max_episode_steps:
             # Get action from the agent
-            action = 
+            action, action_log_prob = self.get_action(observation)
             previous_observation = observation.copy()
 
             # Perform the action on the environment, get new state and reward

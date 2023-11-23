@@ -20,7 +20,7 @@ class DDPGAgent(BaseAgent):
         self.max_action = self.cfg.max_action
         self.lr=self.cfg.lr
       
-        self.buffer = 
+        self.buffer = 2 ###### need to change it later ######
         
         self.batch_size = self.cfg.batch_size
         self.gamma = self.cfg.gamma
@@ -57,7 +57,7 @@ class DDPGAgent(BaseAgent):
         while not done:
             
             # Sample action from policy
-            action = 
+            action = 2 ##### need to change it later ####
 
             # Perform the action on the environment, get new state and reward
             next_obs, reward, done, _, _ = self.env.step(to_numpy(action))
