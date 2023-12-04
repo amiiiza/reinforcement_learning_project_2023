@@ -17,28 +17,28 @@ import matplotlib.pyplot as plt
 
 Batch = namedtuple('Batch', ['state', 'action', 'next_state', 'reward', 'not_done', 'extra'])
 
-# Actor-critic agent
 class Policy(nn.Module):
     def __init__(self, state_dim, action_dim, max_action):
         super().__init__()
         self.max_action = max_action
         self.actor = nn.Sequential(
-            nn.Linear(state_dim, 256), nn.ReLU(),
-            nn.Linear(256, 256), nn.ReLU(),
-            nn.Linear(256, action_dim)
+            nn.Linear(state_dim, 32), nn.ReLU(),
+            nn.Linear(32, 32), nn.ReLU(),
+            nn.Linear(32, action_dim)
         )
 
     def forward(self, state):
         return self.max_action * torch.tanh(self.actor(state))
 
 
+# Critic class. The critic is represented by a neural network.
 class Critic(nn.Module):
     def __init__(self, state_dim, action_dim):
         super().__init__()
         self.value = nn.Sequential(
-            nn.Linear(state_dim+action_dim, 256), nn.ReLU(),
-            nn.Linear(256, 256), nn.ReLU(),
-            nn.Linear(256, 1))
+            nn.Linear(state_dim+action_dim, 32), nn.ReLU(),
+            nn.Linear(32, 32), nn.ReLU(),
+            nn.Linear(32, 1))
 
     def forward(self, state, action):
         x = torch.cat([state, action], 1)
