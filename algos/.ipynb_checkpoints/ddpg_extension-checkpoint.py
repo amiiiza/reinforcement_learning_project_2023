@@ -52,16 +52,18 @@ def to_numpy(tensor):
 
 class DDPGExtension(DDPGAgent):
     def __init__(self, config=None):
-        super(DDPGAgent, self).__init__(config)
+        super(DDPGExtension, self).__init__(config)
         self.name = 'ddpg_extention'
         
+        state_dim = self.observation_space_dim
+        
         self.pi = Policy(state_dim, self.action_dim, self.max_action).to(self.device)
-        self.pi_target = copy.deepcopy(self.actor)
-        self.pi_optimizer = torch.optim.Adam(self.actor.parameters(), lr=float(self.lr))
+        self.pi_target = copy.deepcopy(self.pi)
+        self.pi_optimizer = torch.optim.Adam(self.pi.parameters(), lr=float(self.lr))
 
         self.q = Critic(state_dim, self.action_dim).to(self.device)
-        self.q_target = copy.deepcopy(self.critic)
-        self.q_optimizer = torch.optim.Adam(self.critic.parameters(), lr=float(self.lr))
+        self.q_target = copy.deepcopy(self.q)
+        self.q_optimizer = torch.optim.Adam(self.q.parameters(), lr=float(self.lr))
 
         self.discount = 0.99
         self.policy_noise = 0.2
@@ -110,8 +112,8 @@ class DDPGExtension(DDPGAgent):
         self.total_it += 1
 
         # Sample replay buffer 
-        state, action, next_state, reward, not_done = self.replay_buffer.sample(self.batch_size)
-
+        batch = self.buffer.sample(self.batch_size)
+        state, action, next_state, reward, not_done = batch[0], batch[1], batch[2], batch[3], batch[4] 
         with torch.no_grad():
             # Select action according to policy and add clipped noise
             noise = (
@@ -257,9 +259,9 @@ class DDPGExtension(DDPGAgent):
         filepath=str(self.model_dir)+'/model_parameters_'+str(self.seed)+'.pt'
         
         torch.save({
-            'q': self.critic.state_dict(),
-            'q_target': self.critic_target.state_dict(),
-            'pi': self.actor.state_dict(),
-            'pi_target': self.actor_target.state_dict()
+            'q': self.q.state_dict(),
+            'q_target': self.q_target.state_dict(),
+            'pi': self.pi.state_dict(),
+            'pi_target': self.pi_target.state_dict()
         }, filepath)
         print("Saved model to", filepath, "...")
