@@ -90,8 +90,6 @@ class DDPGAgent(BaseAgent):
         cu.soft_update_params(self.pi, self.pi_target, self.tau)
         self.q_optim.zero_grad()
         self.pi_optim.zero_grad()
-        ########## Your code ends here. ##########
-
 
         return {}
 
